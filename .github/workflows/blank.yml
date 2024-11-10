@@ -1,0 +1,36 @@
+name: Fetch and Convert YAML to JSON
+
+on:
+  workflow_dispatch:  # Trigger manually or on push
+  push:
+    branches:
+      - main
+
+jobs:
+  convert-yaml-to-json:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repo
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Install yq to convert YAML to JSON
+      - name: Install yq
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y yq
+
+      # Fetch YAML file from URL
+      - name: Download YAML file
+        run: |
+          curl -L https://raw.githubusercontent.com/AdobeDocs/commerce-operations.en/main/_jekyll/_data/system-requirements.yml -o file.yaml
+
+      # Convert YAML to JSON
+      - name: Convert YAML to JSON
+        run: |
+          yq eval -j file.yaml > file.json
+
+      # Output the JSON file
+      - name: Display JSON file
+        run: cat file.json
